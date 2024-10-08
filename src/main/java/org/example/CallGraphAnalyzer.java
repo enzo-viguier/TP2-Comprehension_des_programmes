@@ -72,4 +72,30 @@ public class CallGraphAnalyzer {
         frame.setVisible(true);
     }
 
+    public static void visualizeCouplingGraph(Map<String, Map<String, Integer>> couplingGraph) {
+        JFrame frame = new JFrame("Coupling Graph");
+        JTextArea textArea = new JTextArea(20, 40);
+        textArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(textArea);
+
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, Map<String, Integer>> entry : couplingGraph.entrySet()) {
+            String className = entry.getKey();
+            sb.append(className).append(" is coupled with:\n");
+            for (Map.Entry<String, Integer> relation : entry.getValue().entrySet()) {
+                String coupledClass = relation.getKey();
+                int weight = relation.getValue();
+                sb.append("  - ").append(coupledClass)
+                        .append(" (coupling weight: ").append(weight).append(")\n");
+            }
+            sb.append("\n");
+        }
+        textArea.setText(sb.toString());
+
+        frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+    }
+
 }

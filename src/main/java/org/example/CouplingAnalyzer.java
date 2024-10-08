@@ -11,6 +11,7 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import java.util.*;
 
 public class CouplingAnalyzer {
+
     private Map<String, Map<String, Integer>> classCouplings = new HashMap<>();
     private int totalRelations = 0;
     private Set<String> analyzedClasses = new HashSet<>();
@@ -83,4 +84,13 @@ public class CouplingAnalyzer {
 
         return totalRelations > 0 ? (double) relationsBetweenAB / totalRelations : 0;
     }
+
+    public Map<String, Map<String, Integer>> getClassCouplings() {
+        return classCouplings;
+    }
+
+    public int getTotalRelations() {
+        return totalRelations;
+    }
+
 }
