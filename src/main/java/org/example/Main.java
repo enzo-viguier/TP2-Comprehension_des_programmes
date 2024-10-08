@@ -14,7 +14,7 @@ public class Main {
         int nbMethodeClasse = 2;
 
         try {
-            analyzer.analyze("/home/e20200002449/IdeaProjects/StatsAppOO/src/main/java/" +
+            analyzer.analyze("/home/e20200002449/IdeaProjects/TP2-Comprehension_des_programmes/src/main/java/" +
                     "");
 
             System.out.println("1. Nombre de classes : " + analyzer.getNumberOfClasses());
@@ -60,7 +60,17 @@ public class Main {
             Map<String, List<String>> callGraph = callGraphAnalyzer.buildCallGraph(analyzer.classes);
             CallGraphAnalyzer.visualizeCallGraph(callGraph);
 
-        } catch (IOException e) {
+
+            CouplingAnalyzer couplingAnalyzer = new CouplingAnalyzer();
+            couplingAnalyzer.analyzeCoupling(analyzer.compilationUnits);
+            try {
+                String classA = "Book";
+                String classB = "Library";
+                double classCoupling = couplingAnalyzer.calculateCoupling(classA, classB);
+                System.out.println("14. Couplage entre " + classA + " et " + classB + " : " + classCoupling*100 + "%");
+            } catch (ClassNotFoundException e) {
+                System.out.println("Erreur lors du calcul du couplage : " + e.getMessage());
+            }        } catch (IOException e) {
             e.printStackTrace();
         }
 

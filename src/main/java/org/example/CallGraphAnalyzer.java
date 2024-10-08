@@ -1,11 +1,10 @@
 package org.example;
 
+import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-
-
 
 import javax.swing.JFrame;
 import java.awt.*;
@@ -15,6 +14,7 @@ import java.util.Map;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CallGraphAnalyzer {
 
@@ -34,6 +34,7 @@ public class CallGraphAnalyzer {
         }
         return callGraph;
     }
+
 
     private static class MethodCallCollector extends VoidVisitorAdapter<Void> {
         private List<String> calledMethods = new ArrayList<>();
@@ -70,8 +71,5 @@ public class CallGraphAnalyzer {
         frame.pack();
         frame.setVisible(true);
     }
-
-
-
 
 }

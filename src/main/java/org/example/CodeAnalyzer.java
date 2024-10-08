@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class CodeAnalyzer {
 
-    private List<CompilationUnit> compilationUnits = new ArrayList<>();
+    List<CompilationUnit> compilationUnits = new ArrayList<>();
     List<ClassOrInterfaceDeclaration> classes = new ArrayList<>();
     private int totalLines = 0;
     private int totalMethods = 0;
