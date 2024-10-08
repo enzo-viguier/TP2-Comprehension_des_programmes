@@ -1,5 +1,7 @@
 package org.example;
 
+import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
+
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,14 +38,17 @@ public class Main {
         HierarchicalClustering clustering = new HierarchicalClustering(couplingAnalyzer, allClasses);
         List<Set<String>> finalClusters = clustering.performClustering();
 
-        System.out.println("2. Résultat du clustering hiérarchique :");
+        System.out.println("Résultat du clustering hiérarchique :");
         for (int i = 0; i < finalClusters.size(); i++) {
             System.out.println("Cluster " + (i + 1) + ": " + String.join(", ", finalClusters.get(i)));
         }
 
+        System.out.println("\nDendrogramme :");
+        clustering.printDendrogram();
+
 
         List<String> classNames = codeAnalyzer.classes.stream()
-                .map(clazz -> clazz.getNameAsString())
+                .map(NodeWithSimpleName::getNameAsString)
                 .collect(Collectors.toList());
 
         ModuleIdentifier moduleIdentifier = new ModuleIdentifier(
@@ -54,7 +59,7 @@ public class Main {
 
         List<Set<String>> modules = moduleIdentifier.identifyModules();
 
-        System.out.println("3. Modules identifiés :");
+        System.out.println("Modules identifiés :");
         for (int i = 0; i < modules.size(); i++) {
             System.out.println("Module " + (i + 1) + ": " + String.join(", ", modules.get(i)));
         }
