@@ -54,7 +54,7 @@ public class Main {
 
         List<Set<String>> modules = moduleIdentifier.identifyModules();
 
-        System.out.println("15. Modules identifiés :");
+        System.out.println("3. Modules identifiés :");
         for (int i = 0; i < modules.size(); i++) {
             System.out.println("Module " + (i + 1) + ": " + String.join(", ", modules.get(i)));
         }
