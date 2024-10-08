@@ -1,79 +1,63 @@
 package org.example;
 
-import com.github.javaparser.ast.body.MethodDeclaration;
-
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
-    public static void main(String[] args) {
 
-        CodeAnalyzer analyzer = new CodeAnalyzer();
+    public static void main(String[] args) throws IOException {
+        CodeAnalyzer codeAnalyzer = new CodeAnalyzer();
+        codeAnalyzer.analyze("src/main/java");
 
-        int nbMethodeClasse = 2;
 
+
+
+        CouplingAnalyzer couplingAnalyzer = new CouplingAnalyzer();
+        couplingAnalyzer.analyzeCoupling(codeAnalyzer.compilationUnits);
         try {
-            analyzer.analyze("/home/e20200002449/IdeaProjects/TP2-Comprehension_des_programmes/src/main/java/" +
-                    "");
+            String classA = "Book";
+            String classB = "Library";
+            double classCoupling = couplingAnalyzer.calculateCoupling(classA, classB);
+            System.out.println("1. Couplage entre " + classA + " et " + classB + " : " + classCoupling*100 + "%");
+        } catch (ClassNotFoundException e) {
+            System.out.println("Erreur lors du calcul du couplage : " + e.getMessage());
+        }
 
-            System.out.println("1. Nombre de classes : " + analyzer.getNumberOfClasses());
-            System.out.println("2. Nombre de lignes de code : " + analyzer.getNumberOfLines());
-            System.out.println("3. Nombre total de méthodes : " + analyzer.getNumberOfMethods());
-            System.out.println("4. Nombre total de packages : " + analyzer.getNumberOfPackages());
-            System.out.println("5. Nombre moyen de méthodes par classe : " + analyzer.getAverageMethodsPerClass());
-            System.out.println("6. Nombre moyen de lignes de code par méthode : " + analyzer.getAverageLinesPerMethod());
-            System.out.println("7. Nombre moyen d'attributs par classe : " + analyzer.getAverageFieldsPerClass());
-
-            System.out.println("8. 10% des classes avec le plus grand nombre de méthodes : ");
-            analyzer.getTop10PercentClassesByMethods().forEach(c -> System.out.println(c.getNameAsString()));
-
-            System.out.println("9. 10% des classes avec le plus grand nombre d'attributs : ");
-            analyzer.getTop10PercentClassesByFields().forEach(c -> System.out.println(c.getNameAsString()));
-
-            System.out.println("10. Classes qui font partie des deux catégories : " + analyzer.getClassesInBothTop10Percent());
-
-            System.out.println("11. Classes qui possèdent plus de " + nbMethodeClasse + " méthodes : ");
-            analyzer.getClassesWithMoreThanXMethods(nbMethodeClasse).forEach(c -> System.out.println(c.getNameAsString()));
+        // Obtenir et visualiser le graphe de couplage pondéré
+        Map<String, Map<String, Integer>> couplingGraph = couplingAnalyzer.getClassCouplings();
+        CallGraphAnalyzer.visualizeCouplingGraph(couplingGraph);
 
 
-            System.out.println("12. Méthodes avec le plus grand nombre de lignes de code par classe : ");
-            analyzer.classes.forEach(clazz -> {  // On parcourt toutes les classes analysées
-                System.out.println("Classe : " + clazz.getNameAsString());
+        Set<String> allClasses = new HashSet<>(codeAnalyzer.classes.stream()
+                .map(c -> c.getNameAsString())
+                .collect(Collectors.toSet()));
 
-                // Récupérer les méthodes les plus longues pour cette classe
-                List<MethodDeclaration> topMethods = analyzer.getTop10PercentMethodsByLines(clazz);
+        HierarchicalClustering clustering = new HierarchicalClustering(couplingAnalyzer, allClasses);
+        List<Set<String>> finalClusters = clustering.performClustering();
 
-                if (topMethods.isEmpty()) {
-                    System.out.println("  Aucune méthode.");
-                } else {
-                    topMethods.forEach(m -> {
-                        int methodLines = m.getEnd().get().line - m.getBegin().get().line;
-                        System.out.println("  Méthode : " + m.getNameAsString() + " (" + methodLines + " lignes)");
-                    });
-                }
-            });
-
-            System.out.println("13. Nombre maximal de paramètres par rapport à toutes les méthodes : " + analyzer.getMaxParametersPerMethod());
-
-            CallGraphAnalyzer callGraphAnalyzer = new CallGraphAnalyzer();
-            Map<String, List<String>> callGraph = callGraphAnalyzer.buildCallGraph(analyzer.classes);
-            CallGraphAnalyzer.visualizeCallGraph(callGraph);
-
-
-            CouplingAnalyzer couplingAnalyzer = new CouplingAnalyzer();
-            couplingAnalyzer.analyzeCoupling(analyzer.compilationUnits);
-            try {
-                String classA = "Book";
-                String classB = "Library";
-                double classCoupling = couplingAnalyzer.calculateCoupling(classA, classB);
-                System.out.println("14. Couplage entre " + classA + " et " + classB + " : " + classCoupling*100 + "%");
-            } catch (ClassNotFoundException e) {
-                System.out.println("Erreur lors du calcul du couplage : " + e.getMessage());
-            }        } catch (IOException e) {
-            e.printStackTrace();
+        System.out.println("2. Résultat du clustering hiérarchique :");
+        for (int i = 0; i < finalClusters.size(); i++) {
+            System.out.println("Cluster " + (i + 1) + ": " + String.join(", ", finalClusters.get(i)));
         }
 
 
+        List<String> classNames = codeAnalyzer.classes.stream()
+                .map(clazz -> clazz.getNameAsString())
+                .collect(Collectors.toList());
+
+        ModuleIdentifier moduleIdentifier = new ModuleIdentifier(
+                couplingAnalyzer,
+                classNames,
+                0.001 // CP = 0.1, ajustez selon vos besoins
+        );
+
+        List<Set<String>> modules = moduleIdentifier.identifyModules();
+
+        System.out.println("15. Modules identifiés :");
+        for (int i = 0; i < modules.size(); i++) {
+            System.out.println("Module " + (i + 1) + ": " + String.join(", ", modules.get(i)));
+        }
     }
+
 }
