@@ -16,7 +16,7 @@ public class Main {
 
         SpoonCouplingGraphGenerator generator = new SpoonCouplingGraphGenerator(projectPath);
         generator.generateCouplingGraph();
-//        generator.visualizeCouplingGraph();
+        generator.visualizeCouplingGraph();
 
         SpoonHierarchicalClustering clustering = new SpoonHierarchicalClustering(projectPath);
         clustering.generateCouplingMatrix();
