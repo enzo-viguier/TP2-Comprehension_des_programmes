@@ -2,7 +2,7 @@
 
 #### Par GAIDO Tristan et VIGUIER Enzo
 
-Ce projet implémente une analyse statique de code Java permettant d'identifier les couplages entre classes et de regrouper celles-ci en modules cohérents. 
+Ce projet implémente une analyse statique de code Java permettant d'identifier les couplages entre classes et de regrouper celles-ci en modules cohérents.   
 L'objectif est de mieux comprendre la structure d'une application et d'en faciliter la maintenance.
 
 ## Prérequis
