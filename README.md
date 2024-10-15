@@ -2,7 +2,8 @@
 
 #### Par GAIDO Tristan et VIGUIER Enzo
 
-Ce projet permet d'effectuer une analyse statique du code Java en extrayant diverses statistiques et en visualisant un graphe d'appels.
+Ce projet implémente une analyse statique de code Java permettant d'identifier les couplages entre classes et de regrouper celles-ci en modules cohérents. 
+L'objectif est de mieux comprendre la structure d'une application et d'en faciliter la maintenance.
 
 ## Prérequis
 - Java JDK installé
