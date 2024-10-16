@@ -4,7 +4,27 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        String projectPath = "src/main/java";
+        if (args.length < 1) {
+            System.out.println("Usage: java -jar StatsAppOO.jar <projectPath> [CP]");
+            System.out.println("  projectPath: chemin vers le répertoire du projet à analyser");
+            System.out.println("  CP: (optionnel) valeur du seuil de couplage (par défaut: 0.1)");
+            return;
+        }
+
+        String projectPath = args[0];
+        double CP = 0.1; // Valeur par défaut
+
+        if (args.length > 1) {
+            try {
+                CP = Double.parseDouble(args[1]);
+            } catch (NumberFormatException e) {
+                System.out.println("Erreur : Le CP doit être un nombre décimal valide. Utilisation de la valeur par défaut (0.1).");
+            }
+        }
+
+        System.out.println("Analyse du projet : " + projectPath);
+        System.out.println("Valeur de CP : " + CP);
+
         SpoonCouplingAnalyzer analyzer = new SpoonCouplingAnalyzer(projectPath);
         analyzer.analyzeProject();
 
@@ -23,12 +43,8 @@ public class Main {
         List<SpoonHierarchicalClustering.Cluster> result = clustering.performClustering();
         clustering.printDendrogram(result.get(0), "", true);
 
-
-        double CP = 0.1; // Ajustez ce paramètre selon vos besoins
         SpoonModuleIdentifier moduleIdentifier = new SpoonModuleIdentifier(projectPath, CP);
         moduleIdentifier.identifyModules();
         moduleIdentifier.printModules();
-
-
     }
 }
